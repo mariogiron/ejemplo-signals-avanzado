@@ -1,0 +1,7 @@
+[
+  { "id": 1, "nombre": "Antonio Machado", "pais": "España", "nacimiento": 1875 },
+  { "id": 2, "nombre": "Gabriel García Márquez", "pais": "Colombia", "nacimiento": 1927 },
+  { "id": 3, "nombre": "Gloria Fuertes", "pais": "España", "nacimiento": 1917 },
+  { "id": 4, "nombre": "Pablo Neruda", "pais": "Chile", "nacimiento": 1904 },
+  { "id": 5, "nombre": "Carmen Laforet", "pais": "España", "nacimiento": 1921 }
+]

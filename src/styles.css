@@ -1,0 +1,40 @@
+body {
+  font-family: system-ui, sans-serif;
+  margin: 16px;
+}
+.tarjeta {
+  display: block;
+  width: 100%;
+  max-width: 460px;
+  text-align: left;
+  margin-bottom: 2px;
+}
+.tarjeta.destacada {
+  background: #ddf4ff;
+  border-color: #1f6feb;
+}
+.portada {
+  display: inline-block;
+  min-width: 2.2em;
+  font-weight: bold;
+  color: #57606a;
+}
+.ok {
+  color: #1a7f37;
+}
+nav {
+  display: flex;
+  gap: 4px;
+  border-bottom: 1px solid #d0d7de;
+  padding-bottom: 8px;
+}
+nav button.activa {
+  background: #1f6feb;
+  color: white;
+}
+button {
+  margin: 0 6px 6px 0;
+}
+.error {
+  color: #cf222e;
+}

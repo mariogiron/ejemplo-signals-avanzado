@@ -1,0 +1,62 @@
+[
+  {
+    "id": 1,
+    "titulo": "Cien años de soledad",
+    "autor": "Gabriel García Márquez"
+  },
+  {
+    "id": 2,
+    "titulo": "La sombra del viento",
+    "autor": "Carlos Ruiz Zafón"
+  },
+  {
+    "id": 3,
+    "titulo": "Niebla",
+    "autor": "Miguel de Unamuno"
+  },
+  {
+    "id": 4,
+    "titulo": "Campos de Castilla",
+    "autor": "Antonio Machado"
+  },
+  {
+    "id": 5,
+    "titulo": "Veinte poemas de amor",
+    "autor": "Pablo Neruda"
+  },
+  {
+    "id": 6,
+    "titulo": "Platero y yo",
+    "autor": "Juan Ramón Jiménez"
+  },
+  {
+    "id": 7,
+    "titulo": "El arte de la guerra",
+    "autor": "Sun Tzu"
+  },
+  {
+    "id": 8,
+    "titulo": "Sapiens",
+    "autor": "Yuval Noah Harari"
+  },
+  {
+    "id": 9,
+    "titulo": "El mundo de Sofía",
+    "autor": "Jostein Gaarder"
+  },
+  {
+    "id": 10,
+    "titulo": "Mortadelo y Filemón",
+    "autor": "Francisco Ibáñez"
+  },
+  {
+    "id": 11,
+    "titulo": "Astérix el galo",
+    "autor": "René Goscinny"
+  },
+  {
+    "id": 12,
+    "titulo": "Arrugas",
+    "autor": "Paco Roca"
+  }
+]
