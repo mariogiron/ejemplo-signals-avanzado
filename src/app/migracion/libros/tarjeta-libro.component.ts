@@ -21,6 +21,7 @@ export class TarjetaLibroComponent implements OnChanges {
   readonly destacada = input(false);
   readonly elegir = output<Libro>();
 
+  // ✍️ Paso 2 · portada sale de un input: pásala a computed y borra ngOnChanges
   portada = '';
 
   ngOnChanges(): void {
