@@ -1,5 +1,5 @@
-import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
+import { AsyncPipe } from '@angular/common';
+import { AfterViewInit, Component, ElementRef, OnDestroy, inject, viewChild } from '@angular/core';
 import {
   BehaviorSubject,
   combineLatest,
@@ -16,30 +16,32 @@ import { TarjetaLibroComponent } from './tarjeta-libro.component';
 @Component({
   selector: 'app-buscador',
   standalone: true,
-  imports: [CommonModule, TarjetaLibroComponent],
+  imports: [TarjetaLibroComponent, AsyncPipe],
   template: `
     <p><input #caja placeholder="Buscar libro o autor" (input)="texto$.next(caja.value)" /></p>
 
-    <ng-container *ngIf="visibles$ | async as visibles; else cargando">
+    @if (visibles$ | async; as visibles) {
       <p>{{ visibles.length }} libros</p>
-      <app-tarjeta-libro
-        *ngFor="let l of visibles; trackBy: porId"
-        [libro]="l"
-        [destacada]="l.id === seleccionado?.id"
-        (elegir)="seleccionado = $event"
-      ></app-tarjeta-libro>
-    </ng-container>
-    <ng-template #cargando>
+      @for (l of visibles; track porId($index, l)) {
+        <app-tarjeta-libro
+          [libro]="l"
+          [destacada]="l.id === seleccionado?.id"
+          (elegir)="seleccionado = $event"
+        />
+      }
+    } @else {
       <p>Cargando catálogo...</p>
-    </ng-template>
+    }
 
-    <p *ngIf="seleccionado" class="ok">
-      Has elegido «{{ seleccionado.titulo }}», de {{ seleccionado.autor }}
-    </p>
+    @if (seleccionado) {
+      <p class="ok">Has elegido «{{ seleccionado.titulo }}», de {{ seleccionado.autor }}</p>
+    }
   `,
 })
 export class BuscadorComponent implements AfterViewInit, OnDestroy {
-  @ViewChild('caja') caja!: ElementRef<HTMLInputElement>;
+  private catalogo = inject(Catalogo);
+
+  readonly caja = viewChild.required<ElementRef<HTMLInputElement>>('caja');
 
   texto$ = new BehaviorSubject('');
   seleccionado: Libro | null = null;
@@ -47,7 +49,7 @@ export class BuscadorComponent implements AfterViewInit, OnDestroy {
 
   private destruido$ = new Subject<void>();
 
-  constructor(private catalogo: Catalogo) {
+  constructor() {
     this.visibles$ = combineLatest([
       this.catalogo.listar(),
       this.texto$.pipe(debounceTime(300)),
@@ -59,7 +61,7 @@ export class BuscadorComponent implements AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit(): void {
-    this.caja.nativeElement.focus();
+    this.caja().nativeElement.focus();
   }
 
   ngOnDestroy(): void {
