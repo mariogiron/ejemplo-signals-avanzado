@@ -41,6 +41,8 @@ export class PaginaRecursos {
   /** El autor elegido. Al principio, ninguno. */
   protected readonly id = signal<number | undefined>(undefined);
 
-  // ✍️ La ficha: la URL depende de id(). Sin autor, undefined (no pide nada); con autor, /autores/<id>.json
-  protected readonly autor = httpResource<Autor>(() => undefined);
+  /** La URL depende de id(): si cambia, se pide la ficha nueva y se cancela la anterior. */
+  protected readonly autor = httpResource<Autor>(() =>
+    this.id() ? `/autores/${this.id()}.json` : undefined,
+  );
 }
