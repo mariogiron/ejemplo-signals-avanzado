@@ -1,9 +1,8 @@
-import { Component, OnChanges, input, output } from '@angular/core';
+import { Component, computed, input, output } from '@angular/core';
 import { Libro } from './modelo';
 
 @Component({
   selector: 'app-tarjeta-libro',
-  standalone: true,
   template: `
     <button
       type="button"
@@ -11,20 +10,15 @@ import { Libro } from './modelo';
       [class.destacada]="destacada()"
       (click)="elegir.emit(libro())"
     >
-      <span class="portada">{{ portada }}</span>
+      <span class="portada">{{ portada() }}</span>
       {{ libro().titulo }} · {{ libro().autor }}
     </button>
   `,
 })
-export class TarjetaLibroComponent implements OnChanges {
+export class TarjetaLibroComponent {
   readonly libro = input.required<Libro>();
   readonly destacada = input(false);
   readonly elegir = output<Libro>();
 
-  // ✍️ Paso 2 · portada sale de un input: pásala a computed y borra ngOnChanges
-  portada = '';
-
-  ngOnChanges(): void {
-    this.portada = this.libro().titulo.slice(0, 2).toUpperCase();
-  }
+  protected readonly portada = computed(() => this.libro().titulo.slice(0, 2).toUpperCase());
 }
