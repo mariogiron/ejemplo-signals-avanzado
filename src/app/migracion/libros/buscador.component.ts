@@ -56,11 +56,15 @@ export class BuscadorComponent {
     defaultValue: [],
   });
 
-  // ✍️ 1 · La lista filtrada: aplica filtrarPorTexto(..., this.textoEstable()). Con error, lista vacía
-  protected readonly visibles = computed(() => this.libros.value());
+  protected readonly visibles = computed(() =>
+    this.libros.error() ? [] : filtrarPorTexto(this.libros.value(), this.textoEstable()),
+  );
 
-  // ✍️ 2 · La selección depende de visibles: pásala a linkedSignal para que se suelte sola
-  protected readonly seleccionado = signal<Libro | null>(null);
+  /** Se elige a mano y se suelta solo cuando el libro elegido deja de estar a la vista. */
+  protected readonly seleccionado = linkedSignal<Libro[], Libro | null>({
+    source: this.visibles,
+    computation: (visibles, anterior) => visibles.find((l) => l.id === anterior?.value?.id) ?? null,
+  });
 
   constructor() {
     effect(() => {
