@@ -1,18 +1,17 @@
-import { AsyncPipe } from '@angular/common';
-import { AfterViewInit, Component, ElementRef, OnDestroy, inject, viewChild } from '@angular/core';
-import { BehaviorSubject, combineLatest, debounceTime, map, Subject, takeUntil } from 'rxjs';
+import { AfterViewInit, Component, ElementRef, effect, inject, viewChild } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { BehaviorSubject, combineLatest, debounceTime, map } from 'rxjs';
 import { Catalogo } from './catalogo';
 import { filtrarPorTexto, Libro } from './modelo';
 import { TarjetaLibroComponent } from './tarjeta-libro.component';
 
 @Component({
   selector: 'app-buscador',
-  imports: [TarjetaLibroComponent, AsyncPipe],
+  imports: [TarjetaLibroComponent],
   template: `
     <p><input #caja placeholder="Buscar libro o autor" (input)="texto$.next(caja.value)" /></p>
 
-    <!-- ✍️ 2 · La plantilla lee el signal: visibles() en lugar de visibles$ | async -->
-    @if (visibles$ | async; as lista) {
+    @if (visibles(); as lista) {
       <p>{{ lista.length }} libros</p>
       @for (l of lista; track l.id) {
         <app-tarjeta-libro
@@ -30,34 +29,26 @@ import { TarjetaLibroComponent } from './tarjeta-libro.component';
     }
   `,
 })
-export class BuscadorComponent implements AfterViewInit, OnDestroy {
+export class BuscadorComponent implements AfterViewInit {
   private readonly catalogo = inject(Catalogo);
   private readonly caja = viewChild.required<ElementRef<HTMLInputElement>>('caja');
 
   protected readonly texto$ = new BehaviorSubject('');
   protected seleccionado: Libro | null = null;
 
-  protected readonly visibles$ = combineLatest([
+  private readonly visibles$ = combineLatest([
     this.catalogo.listar(),
     this.texto$.pipe(debounceTime(300)),
   ]).pipe(map(([libros, texto]) => filtrarPorTexto(libros, texto)));
 
-  // ✍️ 1 · El puente: declara aquí visibles, que convierte visibles$ en un signal con toSignal
-
-  // ✍️ 3 · Desde aquí... sustituye la suscripción por un effect en el constructor
-  private readonly destruido$ = new Subject<void>();
+  // El puente: el Observable sigue ahí, pero la plantilla ya solo lee un signal.
+  protected readonly visibles = toSignal(this.visibles$);
 
   constructor() {
-    this.visibles$.pipe(takeUntil(this.destruido$)).subscribe((visibles) => {
-      document.title = `Libros (${visibles.length})`;
+    effect(() => {
+      document.title = `Libros (${this.visibles()?.length ?? 0})`;
     });
   }
-
-  ngOnDestroy(): void {
-    this.destruido$.next();
-    this.destruido$.complete();
-  }
-  // ✍️ 3 · ...hasta aquí
 
   ngAfterViewInit(): void {
     this.caja().nativeElement.focus();
