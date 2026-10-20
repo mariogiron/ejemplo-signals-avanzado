@@ -1,28 +1,20 @@
 import { AsyncPipe } from '@angular/common';
 import { AfterViewInit, Component, ElementRef, OnDestroy, inject, viewChild } from '@angular/core';
-import {
-  BehaviorSubject,
-  combineLatest,
-  debounceTime,
-  map,
-  Observable,
-  Subject,
-  takeUntil,
-} from 'rxjs';
+import { BehaviorSubject, combineLatest, debounceTime, map, Subject, takeUntil } from 'rxjs';
 import { Catalogo } from './catalogo';
 import { filtrarPorTexto, Libro } from './modelo';
 import { TarjetaLibroComponent } from './tarjeta-libro.component';
 
 @Component({
   selector: 'app-buscador',
-  standalone: true,
   imports: [TarjetaLibroComponent, AsyncPipe],
   template: `
     <p><input #caja placeholder="Buscar libro o autor" (input)="texto$.next(caja.value)" /></p>
 
-    @if (visibles$ | async; as visibles) {
-      <p>{{ visibles.length }} libros</p>
-      @for (l of visibles; track porId($index, l)) {
+    <!-- ✍️ 2 · La plantilla lee el signal: visibles() en lugar de visibles$ | async -->
+    @if (visibles$ | async; as lista) {
+      <p>{{ lista.length }} libros</p>
+      @for (l of lista; track l.id) {
         <app-tarjeta-libro
           [libro]="l"
           [destacada]="l.id === seleccionado?.id"
@@ -39,37 +31,35 @@ import { TarjetaLibroComponent } from './tarjeta-libro.component';
   `,
 })
 export class BuscadorComponent implements AfterViewInit, OnDestroy {
-  private catalogo = inject(Catalogo);
+  private readonly catalogo = inject(Catalogo);
+  private readonly caja = viewChild.required<ElementRef<HTMLInputElement>>('caja');
 
-  readonly caja = viewChild.required<ElementRef<HTMLInputElement>>('caja');
+  protected readonly texto$ = new BehaviorSubject('');
+  protected seleccionado: Libro | null = null;
 
-  texto$ = new BehaviorSubject('');
-  seleccionado: Libro | null = null;
-  visibles$: Observable<Libro[]>;
+  protected readonly visibles$ = combineLatest([
+    this.catalogo.listar(),
+    this.texto$.pipe(debounceTime(300)),
+  ]).pipe(map(([libros, texto]) => filtrarPorTexto(libros, texto)));
 
-  private destruido$ = new Subject<void>();
+  // ✍️ 1 · El puente: declara aquí visibles, que convierte visibles$ en un signal con toSignal
+
+  // ✍️ 3 · Desde aquí... sustituye la suscripción por un effect en el constructor
+  private readonly destruido$ = new Subject<void>();
 
   constructor() {
-    this.visibles$ = combineLatest([
-      this.catalogo.listar(),
-      this.texto$.pipe(debounceTime(300)),
-    ]).pipe(map(([libros, texto]) => filtrarPorTexto(libros, texto)));
-
     this.visibles$.pipe(takeUntil(this.destruido$)).subscribe((visibles) => {
       document.title = `Libros (${visibles.length})`;
     });
-  }
-
-  ngAfterViewInit(): void {
-    this.caja().nativeElement.focus();
   }
 
   ngOnDestroy(): void {
     this.destruido$.next();
     this.destruido$.complete();
   }
+  // ✍️ 3 · ...hasta aquí
 
-  porId(_indice: number, libro: Libro): number {
-    return libro.id;
+  ngAfterViewInit(): void {
+    this.caja().nativeElement.focus();
   }
 }
