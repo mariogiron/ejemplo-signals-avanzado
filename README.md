@@ -1,59 +1,37 @@
-# Signals
+# signals
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.27.
+Proyecto del módulo 2 de Angular Avanzado: signals y el futuro de Angular. Angular 21.2.
+Independiente del resto de módulos: tiene su propio `package.json` y no comparte código con ningún otro proyecto.
 
-## Development server
+## Arrancar
 
-To start a local development server, run:
+    npm ci
+    git checkout inicio
+    npx ng serve
 
-```bash
-ng serve
-```
+Tres pestañas, que no dependen unas de otras:
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+| Pestaña   | Carpeta             | Qué explica                                                           |
+| --------- | ------------------- | --------------------------------------------------------------------- |
+| Pizarra   | `src/app/pizarra`   | Signal frente a Observable (mira la consola) y `model()`              |
+| Migración | `src/app/migracion` | Un buscador de libros escrito como hace unos años, migrado en 4 pasos |
+| Recursos  | `src/app/recursos`  | `httpResource`, con cancelación                                       |
 
-## Code scaffolding
+## Ejercicios en clase
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+Cada ejercicio es una pareja de etiquetas. La de ejercicio tiene el código a medio hacer y unos comentarios
+`✍️` que dicen qué falta; la de solución es el resultado.
 
-```bash
-ng generate component component-name
-```
+    git checkout -f ejercicio-3-puente     # descarta lo que hayas cambiado y empieza el ejercicio
+    git checkout -f solucion-3-puente      # si te atascas
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+| Paso | Ejercicio              | Solución                 | Qué escribes                                              |
+| ---- | ---------------------- | ------------------------ | --------------------------------------------------------- |
+| 1    | `inicio`               | `solucion-1-automaticas` | Nada: lanzas las seis migraciones automáticas             |
+| 2    | `ejercicio-2-tarjeta`  | `solucion-2-tarjeta`     | `portada` con `computed`                                  |
+| 3    | `ejercicio-3-puente`   | `solucion-3-puente`      | `toSignal` y un `effect`                                  |
+| 4    | `ejercicio-4-signals`  | `solucion-4-signals`     | La lista con `computed` y la selección con `linkedSignal` |
+| 5    | `ejercicio-5-model`    | `solucion-5-model`       | `model()` en lugar de input + output                      |
+| 6    | `ejercicio-6-recursos` | `solucion-6-recursos`    | La URL de `httpResource` que depende de un signal         |
 
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+`main` es el estado final, igual que `solucion-6-recursos` más este README.
